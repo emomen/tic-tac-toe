@@ -1,0 +1,188 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+ :root {
+    --cell-size: 100px;
+    --mark-size: calc(var(--cell-size) * .9);
+}
+
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0;
+}
+
+.board {
+    width: 100vw;
+    height: 80vh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: repeat(4, auto)
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3),
+.cell:nth-child(4) {
+    border-top: none;
+}
+
+.cell:nth-child(4n + 1) {
+    border-left: none;
+}
+
+.cell:nth-child(4n + 4) {
+    border-right: none;
+}
+
+.cell:last-child,
+.cell:nth-child(13),
+.cell:nth-child(14),
+.cell:nth-child(15) {
+    border-bottom: none;
+}
+
+.cell.cross,
+.cell.circle,
+.cell.triangle {
+    cursor: not-allowed;
+}
+
+.cell.cross::before,
+.cell.cross::after,
+.cell.circle::before,
+.cell.triangle::before {
+    background-color: black;
+}
+
+.board.cross .cell:not(.cross):not(.circle):not(.triangle):hover::before,
+.board.cross .cell:not(.cross):not(.circle):not(.triangle):hover::after,
+.board.circle .cell:not(.cross):not(.circle):not(.triangle):hover::before,
+.board.triangle .cell:not(.cross):not(.circle):not(.triangle):hover::before {
+    background-color: lightgrey;
+}
+
+.cell.cross::before,
+.cell.cross::after,
+.board.cross .cell:not(.cross):not(.circle):not(.triangle):hover::before,
+.board.cross .cell:not(.cross):not(.circle):not(.triangle):hover::after {
+    content: '';
+    position: absolute;
+    width: calc(var(--mark-size) * .15);
+    height: var(--mark-size);
+    margin-top: calc(var(--mark-size) * .03);
+}
+
+.cell.cross::before,
+.board.cross .cell:not(.cross):not(.circle):not(.triangle):hover::before {
+    transform: rotate(45deg);
+}
+
+.cell.cross::after,
+.board.cross .cell:not(.cross):not(.circle):not(.triangle):hover::after {
+    transform: rotate(-45deg);
+}
+
+.cell.circle::before,
+.cell.circle::after,
+.board.circle .cell:not(.cross):not(.circle):not(.triangle):hover::before,
+.board.circle .cell:not(.cross):not(.circle):not(.triangle):hover::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+}
+
+.cell.circle::before,
+.board.circle .cell:not(.cross):not(.circle):not(.triangle):hover::before {
+    width: calc(var(--mark-size) * .9);
+    height: calc(var(--mark-size) * .9);
+}
+
+.cell.circle::after,
+.board.circle .cell:not(.cross):not(.circle):not(.triangle):hover::after {
+    width: calc(var(--mark-size) * .6);
+    height: calc(var(--mark-size) * .6);
+    background-color: white;
+}
+
+.cell.triangle::before,
+.cell.triangle::after,
+.board.triangle .cell:not(.cross):not(.circle):not(.triangle):hover::before,
+.board.triangle .cell:not(.cross):not(.circle):not(.triangle):hover::after {
+    content: '';
+    position: absolute;
+    clip-path: polygon(50% 0%, 0% 80%, 100% 80%);
+    margin-top: calc(var(--mark-size) * .2);
+}
+
+.cell.triangle::before,
+.board.triangle .cell:not(.cross):not(.circle):not(.triangle):hover::before {
+    width: var(--mark-size);
+    height: var(--mark-size);
+}
+
+.cell.triangle::after,
+.board.triangle .cell:not(.cross):not(.circle):not(.triangle):hover::after {
+    width: calc(var(--mark-size) * 0.5);
+    height: calc(var(--mark-size) * 0.5);
+    margin: calc(var(--mark-size) * 0.25);
+    margin-top: calc(var(--mark-size) * 0.47);
+    background-color: white;
+}
+
+.game-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .9);
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 5rem;
+    flex-direction: column;
+}
+
+.game-message button {
+    font-size: 3rem;
+    background-color: white;
+    border: 1px solid black;
+    padding: .25em .5em;
+    cursor: pointer;
+}
+
+.game-message button:hover {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+.game-message.show {
+    display: flex;
+}
+
+#status {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: block;
+    text-align: center;
+}

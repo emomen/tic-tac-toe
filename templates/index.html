@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function() {
+    var socket = io.connect('http://localhost:5000');
+    
+    const cellElements = document.querySelectorAll('[data-cell]');
+    const board = document.getElementById('board');
+
+    socket.on('load_game_board', function(data) {
+      board_data = JSON.parse(data);
+      is_new_game = board_data["gameboard"][0]["new_game"] == "true";
+      // setup board
+      board.classList.remove("cross");
+      board.classList.remove("circle");
+      board.classList.remove("triangle");
+      board.classList.add(board_data["gameboard"][1]["player_turn"]);
+      // setup cells
+      counter = 2;
+      cellElements.forEach(cell => {
+        if (is_new_game) {
+          cell.classList.remove("cross");
+          cell.classList.remove("circle");
+          cell.classList.remove("triangle");
+        } else {
+          class_to_add = board_data["gameboard"][counter]["owner"];
+          if (class_to_add) {
+            cell.classList.add(class_to_add);
+          }
+        }
+        cell.style.cursor = board_data["gameboard"][counter]["cursor"];
+        counter++;
+      })
+    });
+
+    socket.on('load_bottom', function(data) {
+      bottom_data = JSON.parse(data);
+      document.getElementById("statusheading").innerHTML = bottom_data["status"];
+      document.getElementById("statusturn").innerHTML = bottom_data["turn"];
+      document.getElementById("gameMessageText").innerHTML = bottom_data["game_message_text"];
+      document.getElementById("status").style.display = bottom_data["status_display"];
+      document.getElementById("gameMessage").style.display = bottom_data["game_message_display"];
+      document.getElementById("restartButton").style.display = bottom_data["restart_button_display"];
+    });
+
+    $(".cell").on('click', function() {
+      if (getComputedStyle(this).cursor != "not-allowed") {
+        this.classList.add(board.className.replace("board", "").trim())
+        socket.emit("move", this.id);
+      }
+    });
+
+    $("#restartButton").on('click', function() {
+      socket.emit("restart");
+    });
+
+    // socket.on('big_test', function(p) {
+      // p = JSON.parse(p);
+      // for (let [key, value] of Object.entries(p)) {
+  // console.log(`${key}: ${value}`);
+  // }
+    // });
+    // socket.on('load_game_board_spectator', function())
+
+
+
+    // socket.on('load_bottom', function(data) {
+    //   $("#bottom").replaceWith(data);
+    // });
+
+    // socket.on('load_game_board', function(data) {
+    //   $(".board").replaceWith(data);
+    // });
+
+    // socket.on('clicked', function() {
+    //   window.alert(this.id);
+    // });
+
+    // $(".cell").click(function() {
+    //   window.alert("lskjdf");
+    //   socket.emit("move", this.id);
+    // });
+
+    
+    // socket.on('connect', function() {
+    //     socket.send('User has connected!');
+    // });
+
+    // socket.on('player_update', function(data) {
+    //     $("#playerlist").replaceWith(data);
+    // });
+
+    // socket.on('message', function(msg) {
+    //     window.alert("test");
+    //     $("#playerlist").replaceWith(msg);
+    // });
+
+    // $('#sendbutton').on('click', function() {
+    //     socket.send($('#myMessage').val());
+    //     $('#myMessage').val('');
+    // });
+
+});
+</script>
+<div class="board" id="board">
+  <div class="cell" id="0" data-cell></div>
+  <div class="cell" id="1" data-cell></div>
+  <div class="cell" id="2" data-cell></div>
+  <div class="cell" id="3" data-cell></div>
+  <div class="cell" id="4" data-cell></div>
+  <div class="cell" id="5" data-cell></div>
+  <div class="cell" id="6" data-cell></div>
+  <div class="cell" id="7" data-cell></div>
+  <div class="cell" id="8" data-cell></div>
+  <div class="cell" id="9" data-cell></div>
+  <div class="cell" id="10" data-cell></div>
+  <div class="cell" id="11" data-cell></div>
+  <div class="cell" id="12" data-cell></div>
+  <div class="cell" id="13" data-cell></div>
+  <div class="cell" id="14" data-cell></div>
+  <div class="cell" id="15" data-cell></div>
+</div>
+<div id="bottom">
+  <div id="status">
+      <h1 id="statusheading"></h1>
+      <h1 id="statusturn"></h1>
+  </div>
+  <div class="game-message" id="gameMessage">
+      <div data-game-message-text id="gameMessageText"></div>
+      <button id="restartButton">Restart</button>
+  </div>
+</div>
+</body>
+</html>
