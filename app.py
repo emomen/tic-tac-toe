@@ -203,4 +203,4 @@ def check_for_draw():
 
 if not win_check:
     win_check = set_winning_combos()
-socketio.run(app, host='0.0.0.0')
+socketio.run(app, debug=True, host='0.0.0.0')
