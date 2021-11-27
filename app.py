@@ -12,7 +12,7 @@ ALL = ["cross", "circle", "triangle"]
 
 # eventlet.monkey_patch()
 app = Flask(__name__)
-app.secret_key = os.urandom(16)
+app.secret_key = os.environ.get('SECRET')
 # socketio = SocketIO(app, async_mode='eventlet')
 socketio = SocketIO(app)
 
