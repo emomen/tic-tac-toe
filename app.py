@@ -4,16 +4,17 @@ import numpy as np
 import os
 import time
 import json
-import eventlet
+# import eventlet
 
 TOTAL_PLAYERS = 3
 BOARD_DIM = (4,4)
 ALL = ["cross", "circle", "triangle"]
 
-eventlet.monkey_patch()
+# eventlet.monkey_patch()
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-socketio = SocketIO(app, async_mode='eventlet')
+# socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app)
 
 board_size = BOARD_DIM[0] * BOARD_DIM[1]
 current_players = []
@@ -203,4 +204,5 @@ def check_for_draw():
 
 if not win_check:
     win_check = set_winning_combos()
+    
 socketio.run(app, debug=True, host='0.0.0.0')
