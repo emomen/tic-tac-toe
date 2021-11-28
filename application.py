@@ -10,8 +10,7 @@ BOARD_DIM = (4,4)
 ALL = ["cross", "circle", "triangle"]
 
 app = Flask(__name__)
-# app.secret_key = os.environ.get('SECRET')
-app.secret_key = "lsjflksdf"
+app.secret_key = os.environ.get('SECRET')
 socketio = SocketIO(app)
 
 board_size = BOARD_DIM[0] * BOARD_DIM[1]
@@ -207,5 +206,6 @@ if not win_check:
 # socketio.run(app, debug=True)
 # app.run()
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, port=port)
+    # port = int(os.environ.get('PORT', 5000))
+    # socketio.run(app, port=port)
+    app.run()
