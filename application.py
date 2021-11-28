@@ -23,15 +23,16 @@ win_check = None # set just before the app starts
 @socketio.on('connect')
 def new_player(auth):
     global current_players
-    print("CONNECTION slkdjflskj")
     if len(current_players) < TOTAL_PLAYERS:
         session["player"] = next(x for x in ALL if x not in current_players)
         current_players.append(session["player"])
+        emit("set_user", json.dumps([session["player"]]))
         wait_check(False)
     else:
         session["player"] = "spectator"
+        emit("set_user", json.dumps([session["player"]]))
         emit("load_game_board", set_game_board(False))
-        emit("load_bottom", set_bottom("spectate" if game_in_progress else "pregame"))
+        emit("load_bottom", set_bottom("game" if game_in_progress else "pregame"))
 
 @socketio.on('disconnect')
 def old_player():
@@ -83,76 +84,53 @@ def wait_check(do_broadcast):
 
 def set_game_board(is_new_game):
     cell_owners = ["" if game_board[i] == 0 else ALL[game_board[i]-1] for i in range(board_size)]
-    if not game_in_progress or ALL[player_turn] != session["player"]: # true during pre-game or during game when it's not the player's turn
-        cell_cursors = ["not-allowed" for i in range(board_size)]
-    else:   # player is in the game and it is their turn
-        cell_cursors = ["pointer" if game_board[i] == 0 else "not-allowed" for i in range(board_size)]
     json_game_board = {"gameboard": []}
     json_game_board["gameboard"].append({"new_game": "true" if is_new_game else "false"})
-    json_game_board["gameboard"].append({"player_turn": ALL[player_turn]})
+    current_player_turn = ALL[player_turn] if game_in_progress else ""
+    json_game_board["gameboard"].append({"player_turn": current_player_turn})
     for i in range(board_size):
-        cell_info = {"owner": cell_owners[i], "cursor": cell_cursors[i]}
+        cell_info = {"owner": cell_owners[i]}
         json_game_board["gameboard"].append(cell_info)
     return json.dumps(json_game_board)
 
 def set_bottom(context):
     if context == "pregame":
         args = {
-            "status": "",
-            "status_display": "block",
             "turn": "",
             "game_message_display": "flex", 
-            "game_message_text": "Waiting for the game to start..." if session  ["player"] == "spectator" else "Waiting for more players...", 
-            "restart_button_display": "none"
+            "game_message_text": ""
         }
     elif context == "game":
         args = {
-            "status": "Playing as " + session["player"].capitalize(),
-            "status_display": "block",
-            "turn": "Your turn" if session["player"] == ALL[player_turn] \
-                else ALL[player_turn].capitalize() + " goes next",
+            "turn": ALL[player_turn],
             "game_message_display": "none", 
-            "game_message_text": "", 
-            "restart_button_display": "none"
+            "game_message_text": ""
         }
-    elif context == "spectate":
-        args = {
-            "status": "Spectating",
-            "status_display": "block",
-            "turn": ALL[player_turn].capitalize() + " goes next",
-            "game_message_display": "none", 
-            "game_message_text": "", 
-            "restart_button_display": "none"
-        }
+    # elif context == "spectate":
+        # args = {
+            # "turn": ALL[player_turn].capitalize() + " goes next",
+            # "game_message_display": "none", 
+            # "game_message_text": ""
+        # }
     elif context == "disconnect":
         args = {
-            "status": "",
-            "status_display": "block",
             "turn": "",
             "game_message_display": "flex", 
-            "game_message_text": "A player has disconnected", 
-            "restart_button_display": "block"
+            "game_message_text": "A player has disconnected"
         }
     elif context == "win":
         args = {
-            "status": "Game over",
-            "status_display": "block",
             "turn": "",
             "game_message_display": "flex", 
-            "game_message_text": ALL[player_turn].capitalize() + " wins!", 
-            "restart_button_display": "none" if session["player"] == "spectator" \
-                else "block"
+            "game_message_text": ALL[player_turn].capitalize() + " wins!"
         }
     elif context == "draw":
         args = {
-            "status": "Game over",
-            "status_display": "block",
             "turn": "",
             "game_message_display": "flex", 
-            "game_message_text": "Draw!", 
-            "restart_button_display": "none" if session["player"] == "spectator" \
-                else "block"
+            "game_message_text": "Draw!"
         }
+    args["type"] = context
     return json.dumps(args)
 
 def set_winning_combos():
