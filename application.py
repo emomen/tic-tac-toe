@@ -56,6 +56,7 @@ def register_move(cell_id):
         emit("load_bottom", set_bottom("draw"), broadcast=True)
     else:
         player_turn = (player_turn + 1) % TOTAL_PLAYERS
+        emit("load_bottom", set_bottom("game"), broadcast=True)
     emit("load_game_board", set_game_board(False), broadcast=True)
     
 @socketio.on('restart')
