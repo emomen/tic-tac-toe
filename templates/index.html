@@ -10,8 +10,6 @@
 <body>
 <script type="text/javascript">
 $(document).ready(function() {
-  // var socket = io.connect('http://localhost:5000');
-  // var socket = io.connect('http://' + document.domain + ':' + location.port);
   var socket = io();
   var user = "";
   var is_user_set = false;
@@ -117,53 +115,6 @@ $(document).ready(function() {
     $("#restartButton").on('click', function() {
       socket.emit("restart");
     });
-
-    // socket.on('big_test', function(p) {
-      // p = JSON.parse(p);
-      // for (let [key, value] of Object.entries(p)) {
-  // console.log(`${key}: ${value}`);
-  // }
-    // });
-    // socket.on('load_game_board_spectator', function())
-
-
-
-    // socket.on('load_bottom', function(data) {
-    //   $("#bottom").replaceWith(data);
-    // });
-
-    // socket.on('load_game_board', function(data) {
-    //   $(".board").replaceWith(data);
-    // });
-
-    // socket.on('clicked', function() {
-    //   window.alert(this.id);
-    // });
-
-    // $(".cell").click(function() {
-    //   window.alert("lskjdf");
-    //   socket.emit("move", this.id);
-    // });
-
-    
-    // socket.on('connect', function() {
-    //     socket.send('User has connected!');
-    // });
-
-    // socket.on('player_update', function(data) {
-    //     $("#playerlist").replaceWith(data);
-    // });
-
-    // socket.on('message', function(msg) {
-    //     window.alert("test");
-    //     $("#playerlist").replaceWith(msg);
-    // });
-
-    // $('#sendbutton').on('click', function() {
-    //     socket.send($('#myMessage').val());
-    //     $('#myMessage').val('');
-    // });
-
 });
 </script>
 <div class="board" id="board">

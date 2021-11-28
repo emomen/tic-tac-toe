@@ -107,12 +107,6 @@ def set_bottom(context):
             "game_message_display": "none", 
             "game_message_text": ""
         }
-    # elif context == "spectate":
-        # args = {
-            # "turn": ALL[player_turn].capitalize() + " goes next",
-            # "game_message_display": "none", 
-            # "game_message_text": ""
-        # }
     elif context == "disconnect":
         args = {
             "turn": "",
@@ -182,10 +176,5 @@ def check_for_draw():
 if not win_check:
     win_check = set_winning_combos()
 
-# socketio.run(app, debug=True, host='0.0.0.0')
-# socketio.run(app, debug=True)
-# app.run()
 if __name__ == "__main__":
-    # port = int(os.environ.get('PORT', 5000))
-    # socketio.run(app, port=port)
     app.run()
