@@ -4,16 +4,14 @@ import numpy as np
 import os
 import time
 import json
-# import eventlet
 
 TOTAL_PLAYERS = 3
 BOARD_DIM = (4,4)
 ALL = ["cross", "circle", "triangle"]
 
-# eventlet.monkey_patch()
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET')
-# socketio = SocketIO(app, async_mode='eventlet')
+# app.secret_key = os.environ.get('SECRET')
+app.secret_key = "lsjflksdf"
 socketio = SocketIO(app)
 
 board_size = BOARD_DIM[0] * BOARD_DIM[1]
@@ -207,4 +205,6 @@ if not win_check:
 
 # socketio.run(app, debug=True, host='0.0.0.0')
 # socketio.run(app, debug=True)
-app.run()
+# app.run()
+port = int(os.environ.get('PORT', 5000))
+socketio.run(app, port=port)
