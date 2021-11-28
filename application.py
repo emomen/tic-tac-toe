@@ -207,4 +207,5 @@ if not win_check:
 # socketio.run(app, debug=True)
 # app.run()
 port = int(os.environ.get('PORT', 5000))
+print(port)
 socketio.run(app, port=port)
