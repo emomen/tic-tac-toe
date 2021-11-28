@@ -47,7 +47,7 @@ def old_player():
 def register_move(cell_id):
     global game_board, player_turn, game_in_progress
     player_num = ALL.index(session["player"]) + 1
-    game_board[cell_id] = player_num
+    game_board[int(cell_id)] = player_num
     if check_for_win():
         game_in_progress = False
         emit("load_bottom", set_bottom("win"), broadcast=True)
