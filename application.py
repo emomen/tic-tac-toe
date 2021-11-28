@@ -23,6 +23,7 @@ win_check = None # set just before the app starts
 @socketio.on('connect')
 def new_player(auth):
     global current_players
+    print("CONNECTION slkdjflskj")
     if len(current_players) < TOTAL_PLAYERS:
         session["player"] = next(x for x in ALL if x not in current_players)
         current_players.append(session["player"])
