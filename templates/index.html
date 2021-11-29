@@ -14,107 +14,107 @@ $(document).ready(function() {
   var user = "";
   var is_user_set = false;
 
-    const cellElements = document.querySelectorAll('[data-cell]');
-    const board = document.getElementById('board');
+  const cellElements = document.querySelectorAll('[data-cell]');
+  const board = document.getElementById('board');
 
-    socket.on('set_user', function(data) {
-      user_data = JSON.parse(data);
-      user = user_data[0];
-      is_user_set = true;
-    });
+  socket.on('set_user', function(data) {
+    user_data = JSON.parse(data);
+    user = user_data[0];
+    is_user_set = true;
+  });
 
-    socket.on('load_game_board', function(data) {
-      while (!is_user_set) {}
-      board_data = JSON.parse(data);
-      is_new_game = board_data["gameboard"][0]["new_game"] == "true";
-      is_turn = board_data["gameboard"][1]["player_turn"] == user;
-      // setup board
-      board.classList.remove("cross");
-      board.classList.remove("circle");
-      board.classList.remove("triangle");
-      if (is_turn) {
-        board.classList.add(user);
+  socket.on('load_game_board', function(data) {
+    while (!is_user_set) {}
+    board_data = JSON.parse(data);
+    is_new_game = board_data["gameboard"][0]["new_game"] == "true";
+    is_turn = board_data["gameboard"][1]["player_turn"] == user;
+    // setup board
+    board.classList.remove("cross");
+    board.classList.remove("circle");
+    board.classList.remove("triangle");
+    if (is_turn) {
+      board.classList.add(user);
+    }
+    // setup cells
+    counter = 2;
+    cellElements.forEach(cell => {
+      if (is_new_game) {
+        cell.classList.remove("cross");
+        cell.classList.remove("circle");
+        cell.classList.remove("triangle");
+      } else {
+        class_to_add = board_data["gameboard"][counter]["owner"];
+        if (class_to_add) {
+          cell.classList.add(class_to_add);
+        }
       }
-      // setup cells
-      counter = 2;
-      cellElements.forEach(cell => {
-        if (is_new_game) {
-          cell.classList.remove("cross");
-          cell.classList.remove("circle");
-          cell.classList.remove("triangle");
-        } else {
-          class_to_add = board_data["gameboard"][counter]["owner"];
-          if (class_to_add) {
-            cell.classList.add(class_to_add);
-          }
-        }
-        if (is_turn && cell.className == "cell") {
-          cell.style.cursor = "pointer";
-        } else {
-          cell.style.cursor = "not-allowed";
-        }
-        counter++;
-      })
-    });
+      if (is_turn && cell.className == "cell") {
+        cell.style.cursor = "pointer";
+      } else {
+        cell.style.cursor = "not-allowed";
+      }
+      counter++;
+    })
+  });
     
-    socket.on('load_bottom', function(data) {
-      while (!is_user_set) {}
-      bottom_data = JSON.parse(data);
+  socket.on('load_bottom', function(data) {
+    while (!is_user_set) {}
+    bottom_data = JSON.parse(data);
 
-      // status heading
-      if (bottom_data["type"] == "game" && user == "spectator") {
-        status_text = "Spectating";
-      } else if (bottom_data["type"] == "game") {
-        status_text = "Playing as " + user.charAt(0).toUpperCase() + user.slice(1);
-      } else if (["win", "draw"].indexOf(bottom_data["type"]) >= 0) {
-        status_text = "Game over";
-      } else {
-        status_text = "";
-      }
-      document.getElementById("statusheading").innerHTML = status_text;
+    // status heading
+    if (bottom_data["type"] == "game" && user == "spectator") {
+      status_text = "Spectating";
+    } else if (bottom_data["type"] == "game") {
+      status_text = "Playing as " + user.charAt(0).toUpperCase() + user.slice(1);
+    } else if (["win", "draw"].indexOf(bottom_data["type"]) >= 0) {
+      status_text = "Game over";
+    } else {
+      status_text = "";
+    }
+    document.getElementById("statusheading").innerHTML = status_text;
 
-      // turn
-      if (bottom_data["type"] == "game" && user == bottom_data["turn"]) {
-        turn_text = "Your turn";
-      } else if (bottom_data["type"] == "game") {
-        turn_text = bottom_data["turn"].charAt(0).toUpperCase() + bottom_data["turn"].slice(1) + "'s turn";
-      } else {
-        turn_text = "";
-      }
-      document.getElementById("statusturn").innerHTML = turn_text;
+    // turn
+    if (bottom_data["type"] == "game" && user == bottom_data["turn"]) {
+      turn_text = "Your turn";
+    } else if (bottom_data["type"] == "game") {
+      turn_text = bottom_data["turn"].charAt(0).toUpperCase() + bottom_data["turn"].slice(1) + "'s turn";
+    } else {
+      turn_text = "";
+    }
+    document.getElementById("statusturn").innerHTML = turn_text;
 
-      // game message text
-      if (bottom_data["type"] == "pregame" && user == "spectator") {
-        game_message_string = "Waiting for the game to start...";
-      } else if (bottom_data["type"] == "pregame") {
-        game_message_string = "Waiting for more players...";
-      } else {
-        game_message_string = bottom_data["game_message_text"];
-      }
-      document.getElementById("gameMessageText").innerHTML = game_message_string;
+    // game message text
+    if (bottom_data["type"] == "pregame" && user == "spectator") {
+      game_message_string = "Waiting for the game to start...";
+    } else if (bottom_data["type"] == "pregame") {
+      game_message_string = "Waiting for more players...";
+    } else {
+      game_message_string = bottom_data["game_message_text"];
+    }
+    document.getElementById("gameMessageText").innerHTML = game_message_string;
 
-      // game message display
-      document.getElementById("gameMessage").style.display = bottom_data["game_message_display"];
-      
-      // restart button
-      if (["disconnect", "win", "draw"].indexOf(bottom_data["type"]) >= 0 && user != "spectator") {
-        restart_button_style = "block";
-      } else {
-        restart_button_style = "none";
-      }
-      document.getElementById("restartButton").style.display = restart_button_style;
-    });
+    // game message display
+    document.getElementById("gameMessage").style.display = bottom_data["game_message_display"];
+    
+    // restart button
+    if (["disconnect", "win", "draw"].indexOf(bottom_data["type"]) >= 0 && user != "spectator") {
+      restart_button_style = "block";
+    } else {
+      restart_button_style = "none";
+    }
+    document.getElementById("restartButton").style.display = restart_button_style;
+  });
 
-    $(".cell").on('click', function() {
-      if (getComputedStyle(this).cursor != "not-allowed") {
-        this.classList.add(board.className.replace("board", "").trim())
-        socket.emit("move", this.id);
-      }
-    });
+  $(".cell").on('click', function() {
+    if (getComputedStyle(this).cursor != "not-allowed") {
+      this.classList.add(board.className.replace("board", "").trim())
+      socket.emit("move", this.id);
+    }
+  });
 
-    $("#restartButton").on('click', function() {
-      socket.emit("restart");
-    });
+  $("#restartButton").on('click', function() {
+    socket.emit("restart");
+  });
 });
 </script>
 <div class="board" id="board">
